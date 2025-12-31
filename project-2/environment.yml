@@ -1,0 +1,25 @@
+name: cellseg_env
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  # --- Conda Packages ---
+  - python=3.10
+  - pip  # <-- ADD THIS LINE
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=11.8
+  - numpy<2.0
+  - opencv
+  - pandas
+  - tqdm
+  - scikit-learn
+  - lxml
+  - albumentations
+  - shapely
+  - geopandas
+  # --- Pip Packages ---
+  - pip:
+    - cellseg-models-pytorch

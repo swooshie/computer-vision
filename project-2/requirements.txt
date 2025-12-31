@@ -1,0 +1,15 @@
+# In /scratch/aaj6301/cell_segmentation_project/requirements.txt
+
+numpy<2.0
+torch
+torchvision
+torchaudio
+cellseg-models-pytorch
+opencv-python-headless
+pandas
+tqdm
+scikit-learn
+lxml
+albumentations
+shapely
+geopandas
