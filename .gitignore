@@ -1,0 +1,92 @@
+# macOS metadata
+.DS_Store
+
+# Python caches and build artifacts
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+build/
+dist/
+
+# Virtual environments
+.env
+.venv/
+env/
+venv/
+cell_project_env/
+pip-wheel-metadata/
+
+# Notebooks
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# Editors and IDEs
+.vscode/
+.idea/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Model checkpoints and serialized artifacts
+*.pth
+*.pt
+*.pkl
+*.h5
+*.onnx
+*.ckpt
+*.joblib
+
+# Large archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+
+# TensorBoard and experiment outputs
+runs/
+tensorboard/
+
+# Project-specific bulky assets
+project01/Data_Project1/
+project01/data/
+project01/output/
+project01/output-*/
+project01/output-q3/
+project01/output-q4/
+project01/Final/data/
+project01/Final/outputs-4/
+
+project-2/data/
+project-2/kaggle-data/
+project-2/kaggle-data.zip
+project-2/output/
+project-2/output-*/
+project-2/output_dir_keras/
+project-2/output_dir_keras_final/
+project-2/output_dir_keras_v2/
+project-2/combinations-maskrcnn/
+project-2/combinations-maskrcnn-50epochs/
+project-2/combinations-maskrcnn-final/
+project-2/output-resnet50/
+
+project-3/data/
+project-3/*.pt
+project-3/test_video_features_nn.csv
+project-3/train_video_features_nn.csv
+
+project-4/data/
+project-4/checkpoints/
+project-4/*.pt
+
+# Submission files generated locally
+project01/submission_*.csv
+project-2/submission*.csv
+project-3/submission*.csv
+project-4/submission*.csv

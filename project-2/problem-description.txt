@@ -1,0 +1,447 @@
+Overview
+
+Welcome to Project 2 for CS GY 6643: Multi-Organ Nuclei Segmentation & Classification!
+
+
+
+In this competition, you will dive into the world of computational pathology, a field where computer vision and machine learning are used to analyze medical images and improve patient care.
+
+
+
+The Problem
+
+In cancer research, understanding the Tumor Microenvironment (TME) is critical. The TME is a complex ecosystem of different cell types, including tumor cells (epithelial) and various immune cells (like lymphocytes and macrophages). The exact type, number, and spatial arrangement of these cells can tell doctors about a patient's prognosis and how they might respond to treatments like immunotherapy.
+
+
+
+Manually identifying and counting every cell in a tissue slide is slow, expensive, and subjective. Your goal is to automate this process.
+
+
+
+Your Goal
+
+Your objective is to create a model that takes a high-resolution H&E-stained tissue image as input and performs instance segmentation and classification on cell nuclei.
+
+
+
+For every image, your model must:
+
+
+
+Detect every individual nucleus.
+
+Segment its precise boundary (create a pixel-perfect mask).
+
+Classify it as one of the four target cell types:
+
+Epithelial
+
+Lymphocyte
+
+Macrophage
+
+Neutrophil
+
+The Challenge
+
+This is a difficult task for several reasons:
+
+
+
+Multi-Organ: The dataset contains images from four different organs (Lung, Prostate, Kidney, and Breast). Your model must be robust enough to work across all of them.
+
+Class Imbalance: Just like in real biology, the dataset is highly imbalanced. Some cell types are far rarer than others. You will need to develop strategies to handle this.
+
+Dense & Overlapping: Nuclei are often densely packed and overlapping, making it challenging to separate them into distinct instances.
+
+Success in this competition will require a strong model that can simultaneously segment and classify, while also being robust to domain shift (different organs) and imbalanced data.
+
+
+
+Good luck!
+
+
+
+Start
+
+
+
+13 days ago
+
+Close
+
+a day to go
+
+Description
+
+The Domain: Digital Pathology
+
+This competition places you at the center of a major revolution in medicine: computational pathology. Traditionally, pathologists diagnose diseases like cancer by manually examining tissue slides under a microscope. This process is time-consuming, subjective, and hard to reproduce.
+
+
+
+Your task is to build an algorithm that helps automate a critical part of this analysis. You'll be working with H&E (hematoxylin and eosin) stained images, which are the "gold standard" in pathology.
+
+
+
+Hematoxylin stains cell nuclei a blue/purple color.
+
+Eosin stains the cytoplasm and extracellular matrix a pink color.
+
+Your model will learn to read these images just like a pathologist, but with the added power of quantitative analysis.
+
+
+
+The Data: A Multi-Organ, Multi-Class Challenge
+
+The dataset for this project is complex and designed to test the robustness of your models. It has two primary dimensions of difficulty:
+
+
+
+1. Multi-Organ
+
+The images are not from a single source. They are sampled from tissue slides of four different organs:
+
+
+
+Lung
+
+Prostate
+
+Kidney
+
+Breast
+
+A major challenge is domain shift. The cellular structure, tissue appearance, and staining intensity can vary significantly between these organs. A model that only learns what a lung nucleus looks like will fail on prostate tissue. Your algorithm must be a generalist.
+
+
+
+2. Multi-Class
+
+Your goal is not just to find nuclei, but to classify them into four functionally distinct types. Understanding this "tumor microenvironment" is key to modern cancer treatment.
+
+
+
+Epithelial: These are the cells that form the tissue lining. Most cancers (carcinomas) originate from epithelial cells.
+
+Lymphocyte: A type of white blood cell. Their presence (as Tumor-Infiltrating Lymphocytes, or TILs) is often a crucial sign that the body's immune system is fighting the tumor.
+
+Macrophage: Another type of immune cell that "eats" foreign material. Their role is complex, as they can be both tumor-fighting and tumor-promoting.
+
+Neutrophil: A "first-responder" immune cell.
+
+The Core Technical Challenges
+
+When building your model, you will need to directly address these three problems:
+
+
+
+1. Instance Segmentation vs. Semantic Segmentation
+
+You are tasked with instance segmentation. This means that if two Lymphocyte nuclei are touching, your model must output two separate masks, not one combined "lymphocyte blob." This is significantly harder than semantic segmentation and often requires specialized model architectures or post-processing techniques (like watershed algorithms).
+
+
+
+2. Extreme Class Imbalance
+
+You will quickly discover that the training data is not balanced. Just like in real tissue, some cell types (like Epithelial cells) are extremely common, while others (like Neutrophil or Macrophage) are very rare. This is, in effect, a few-shot learning problem. If you are not careful, your model will learn to ignore the rare classes entirely. You must use techniques to handle this imbalance, such as:
+
+
+
+Class-balanced sampling
+
+Weighted loss functions (e.g., Focal Loss)
+
+Data augmentation
+
+3. Dense and Overlapping Nuclei
+
+In many tissue regions, cells are packed together like cobblestones. This makes it incredibly difficult to "draw the line" between one nucleus and the next. Your model will need to be very precise to separate these overlapping and touching instances.
+
+
+
+Evaluation
+
+Submissions are evaluated using the Weighted Panoptic Quality (wPQ) metric, which assesses both segmentation quality and detection/classification accuracy, emphasizing correct identification of rare cell types.
+
+
+
+The score is calculated for each image as follows:
+
+
+
+Intersection over Union (IoU) The similarity between a predicted nucleus mask and a ground truth nucleus mask is measured using the Intersection over Union (IoU), also known as the Jaccard Index:
+
+
+
+Matching A predicted nucleus is considered a True Positive (TP) for a specific class if it satisfies both:
+
+
+
+It has the correct class label.
+
+Its IoU with a ground truth nucleus of the same class is greater than 0.5.
+
+Unmatched predicted nuclei are False Positives (FP), and unmatched ground truth nuclei are False Negatives (FN).
+
+
+
+Panoptic Quality (PQ) For each class c, the Panoptic Quality (PQ(c)) combines segmentation quality (average IoU of true positives) with detection quality (penalizing FPs and FNs):
+
+
+
+Weighted Panoptic Quality (wPQ) The final score for an image is the weighted sum of the PQ(c) scores across all four classes. To emphasize rare cell types, macrophages and neutrophils are assigned higher weights.
+
+
+
+The class weights (w(c)) are:
+
+
+
+Epithelial: 1
+
+Lymphocyte: 1
+
+Macrophage: 10
+
+Neutrophil: 10
+
+The wPQ score is:
+
+
+
+The leaderboard is determined by the average wPQ across all test images.
+
+
+
+Submission Format
+
+1. What You Need to Predict
+
+For each test image (e.g., slide1.tif, slide2.tif), your model should output four 2D instance maps, one per cell type. Each instance map should have the same size as the input image and contain:
+
+
+
+0 → background
+
+Positive integers (1, 2, 3, …) → unique nucleus IDs
+
+Example (for one cell type):
+
+
+
+Epithelial_mask =
+
+[[0, 0, 1, 1, 0],
+
+ [0, 0, 1, 1, 0],
+
+ [0, 0, 0, 0, 0],
+
+ [2, 2, 0, 0, 0],
+
+ [2, 2, 0, 0, 0]]
+
+Here, Instance 1 is the top-right nucleus and Instance 2 is the bottom-left nucleus. You must do this separately for all 4 cell types.
+
+
+
+2. The RLE Encoding Format
+
+Your submission CSV will have 4 columns, each storing one long string that encodes all instances of that class. The format is a sequence of value start length triples:
+
+
+
+value start length value start length ...
+
+
+
+Token	Meaning
+
+value	Instance ID (must be > 0)
+
+start	Start index (1-based, Fortran order / column-major flattening)
+
+length	Number of consecutive pixels in that instance
+
+A value of "0" (the string zero) means no cells were detected for that class.
+
+
+
+Example: Suppose your flattened (column-major) mask is: [0, 1, 1, 0, 2, 2, 2, 0] Then the RLE string is: "1 2 2 2 5 3"
+
+
+
+Explanation:
+
+
+
+Instance 1 begins at pixel 2, runs for 2 pixels.
+
+Instance 2 begins at pixel 5, runs for 3 pixels.
+
+3. Example Code – Encoding and Decoding
+
+Encode a 2D instance mask to RLE
+
+import numpy as np
+
+
+
+def rle_encode_instance_mask(mask: np.ndarray) -> str:
+
+    """
+
+    Convert an instance segmentation mask (H,W) -> RLE triple string.
+
+    0 = background, >0 = instance IDs.
+
+    """
+
+    pixels = mask.flatten(order="F").astype(np.int32)
+
+    pixels = np.concatenate([[0], pixels, [0]])
+
+    runs = np.where(pixels[1:] != pixels[:-1])[0] + 1
+
+
+
+    rle = []
+
+    for i in range(0, len(runs)-1):
+
+        start = runs[i]
+
+        end = runs[i+1] if i+1 < len(runs) else len(pixels)-1
+
+        length = end - start
+
+        val = pixels[start]
+
+        if val > 0:
+
+            rle.extend([val, start, length])
+
+
+
+    if not rle:
+
+        return "0" # Return "0" if no instances are found
+
+
+
+    return " ".join(map(str, rle))
+
+Decode back from RLE (for sanity checks)
+
+def rle_decode_instance_mask(rle: str, shape: tuple[int, int]) -> np.ndarray:
+
+    """
+
+    Convert RLE triple string back into an instance mask of shape (H, W).
+
+    """
+
+    if not rle or str(rle).strip() in ("", "0", "nan"):
+
+        return np.zeros(shape, dtype=np.uint16)
+
+    s = list(map(int, rle.split()))
+
+    mask = np.zeros(shape[0]*shape[1], dtype=np.uint16)
+
+    for i in range(0, len(s), 3):
+
+        val, start, length = s[i], s[i+1], s[i+2]
+
+        mask[start-1:start-1+length] = val
+
+    return mask.reshape(shape, order="F")
+
+4. Building Your Submission CSV
+
+Each row corresponds to one image. The file must be a .csv with the following header:
+
+
+
+image_id,Epithelial,Lymphocyte,Neutrophil,Macrophage
+
+
+
+image_id: Must match the test image names (e.g., slide1, slide2, …).
+
+Epithelial, Lymphocyte, Neutrophil, Macrophage: The RLE triple string for that class.
+
+Use "0" (the string zero) if your model found no cells for that class.
+
+Example submission.csv:
+
+
+
+image_id,Epithelial,Lymphocyte,Neutrophil,Macrophage
+
+slide1,"1 2 2 2 10 3","1 105 4 2 402 6","0","0"
+
+slide2,"0","0","0","0"
+
+slide3,"1 25 10","1 120 5","0","1 60 3"
+
+5. Submission Checklist
+
+Do this before uploading:
+
+
+
+Check	Requirement
+
+Column names	Exactly image_id,Epithelial,Lymphocyte,Neutrophil,Macrophage
+
+image_id values	Must match test set names exactly (slide1, slide2, …)
+
+No nulls	Replace NaN with "0" (the string zero)
+
+Consistent type	All fields must be strings (no lists or JSON)
+
+Encoding	UTF-8 CSV with commas, no extra header rows
+
+
+
+Dataset Description
+
+Data Description
+
+Welcome to Project 2 for CS GY 6643. The goal of this project is to perform instance segmentation and classification of nuclei from histology images. You are provided with a set of training images derived from 40x magnification H&E-stained tissue sections, their corresponding annotations, and a test set of images for which you must generate predictions.
+
+The task is to identify every nucleus in a test image, draw its precise segmentation mask, and classify it as one of four types.
+
+Files
+
+* train_ground_truth.csv: The primary training annotation file. Each row represents a single image and provides the combined RLE masks for each of the four cell types.
+
+* train/ (folder): Contains the training image files (in .tif format) as well as the raw, instance-level annotations (in .xml format) from which the train_ground_truth.csv was generated.
+
+* test_final/ (folder): Contains the test image files (in .tif format).
+
+Columnstrain_ground_truth.csv
+
+This file contains one row for each training image.
+
+* image_id: A unique identifier for the source image (e.g., slide100, slide2).
+
+* Epithelial: A single RLE string for the combined mask of all Epithelial nuclei in the image.
+
+* Lymphocyte: A single RLE string for the combined mask of all Lymphocyte nuclei.
+
+* Neutrophil: A single RLE string for the combined mask of all Neutrophil nuclei.
+
+* Macrophage: A single RLE string for the combined mask of all Macrophage nuclei.train/slideX.xml (Raw Annotation Source)
+
+These files contain the raw instance-level polygon data used to create the ground truth CSV. You can use these files if you want to train an instance segmentation model.
+
+* <Annotation>: A top-level tag, typically one for each class (e.g., <Attribute Name="Macrophage">).
+
+* <Region>: A tag nested within <Annotation>, representing a single nucleus instance of that class.
+
+* <Vertex>: A list of X and Y attributes defining the polygon boundary for that specific nucleus.
+
+my data is in kaggle-data folder and also additional in kaggle-data/val folder with tifs and xml and also val_truth.csv
